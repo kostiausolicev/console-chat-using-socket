@@ -6,28 +6,31 @@ import java.nio.charset.StandardCharsets;
 
 public class ClientHandler extends Thread {
     private final Socket client;
-    private final OutputStream writer;
-    private final InputStream reader;
+    private final PrintWriter writer;
+    private final BufferedReader reader;
     private final Server server;
 
     public ClientHandler(Socket client, Server server) throws IOException {
         this.client = client;
         this.server = server;
-        writer = client.getOutputStream();
-        reader = client.getInputStream();
+        writer = new PrintWriter(client.getOutputStream(), true);
+        reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
     }
 
     @Override
     public void run() {
         try {
             while (true) {
-                byte[] buffer = new byte[1024];
-                int bytesRead = reader.read(buffer);
-                if (bytesRead != -1) {
-                    String message = new String(buffer, 0, bytesRead, StandardCharsets.UTF_8);
-                    System.out.println(message);
-                    server.sendMessageAll(message);
-                }
+                String message = reader.readLine();
+                System.out.println(message);
+                server.sendMessageAll(message);
+//                byte[] buffer = new byte[1024];
+//                int bytesRead = reader.read(buffer);
+//                if (bytesRead != -1) {
+//                    String message = new String(buffer, 0, bytesRead, StandardCharsets.UTF_8);
+//                    System.out.println(message);
+//                    server.sendMessageAll(message);
+//                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -41,11 +44,13 @@ public class ClientHandler extends Thread {
     }
 
     public void send(String message) {
-        try {
-            writer.write(message.getBytes(StandardCharsets.UTF_8));
-            writer.flush();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        writer.println(message);
+        writer.flush();
+//        try {
+//            writer.write(message.getBytes(StandardCharsets.UTF_8));
+//            writer.flush();
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
     }
 }
