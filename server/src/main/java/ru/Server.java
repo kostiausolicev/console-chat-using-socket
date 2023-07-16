@@ -2,6 +2,7 @@ package ru;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ public class Server extends Thread {
     public Server() throws IOException {
         int port = 8000;
         socket = new ServerSocket(port);
-        System.out.println("Сервер запущен");
+        System.out.println("Server start on port " + port);
     }
 
     @Override
@@ -34,8 +35,13 @@ public class Server extends Thread {
         start();
     }
 
-    public void sendMessageAll(String msg) {
+    public void sendMessageAll(String msg, Socket socket) {
         for (var client : connections) {
+            if (client.equals(socket)) {
+                var arr = msg.split(":");
+                client.send("Message from you: " + arr[1]);
+                continue;
+            }
             client.send(msg);
         }
     }

@@ -22,15 +22,8 @@ public class ClientHandler extends Thread {
         try {
             while (true) {
                 String message = reader.readLine();
-                System.out.println(message);
-                server.sendMessageAll(message);
-//                byte[] buffer = new byte[1024];
-//                int bytesRead = reader.read(buffer);
-//                if (bytesRead != -1) {
-//                    String message = new String(buffer, 0, bytesRead, StandardCharsets.UTF_8);
-//                    System.out.println(message);
-//                    server.sendMessageAll(message);
-//                }
+                System.out.println("Message from " + client.getInetAddress().getHostName() + ": " + message);
+                server.sendMessageAll("Message from " + client.getInetAddress().getHostName() + ": " + message, client);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -43,14 +36,12 @@ public class ClientHandler extends Thread {
         }
     }
 
+    public boolean equals(Socket socket) {
+        return client.equals(socket);
+    }
+
     public void send(String message) {
         writer.println(message);
         writer.flush();
-//        try {
-//            writer.write(message.getBytes(StandardCharsets.UTF_8));
-//            writer.flush();
-//        } catch (IOException ex) {
-//            ex.printStackTrace();
-//        }
     }
 }
