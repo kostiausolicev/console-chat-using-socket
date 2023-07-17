@@ -1,4 +1,4 @@
-package org.example;
+package ru;
 
 public class MessageUtil {
     private String name;

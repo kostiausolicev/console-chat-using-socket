@@ -22,6 +22,7 @@ public class Server extends Thread {
             while (true) {
                 var clientSocket = socket.accept();
                 System.out.println("New connect from " + clientSocket.getInetAddress().getHostName());
+                sendMessageAll("message=New connect from " + clientSocket.getInetAddress().getHostName(), clientSocket);
                 ClientHandler handler = new ClientHandler(clientSocket, this);
                 connections.add(handler);
                 handler.start();
@@ -35,13 +36,9 @@ public class Server extends Thread {
         start();
     }
 
+    // TODO Добавить объекты сообщений в которых можно отправлять файлы и прочее
     public void sendMessageAll(String msg, Socket socket) {
         for (var client : connections) {
-            if (client.equals(socket)) {
-                var arr = msg.split(":");
-                client.send("Message from you: " + arr[1]);
-                continue;
-            }
             client.send(msg);
         }
     }

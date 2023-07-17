@@ -14,8 +14,9 @@ public class Client {
             Thread readThread = new Thread(() -> {
                 while (true) {
                     try {
-                        var message = reader.readLine();
-                        System.out.println(message);
+                        var resp = reader.readLine();
+                        var message = MessageUtil.deser(resp);
+                        System.out.println((message.getName() != null ? message.getName() + ": " : "") + message.getMessage());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -24,9 +25,14 @@ public class Client {
 
             Thread writeThread = new Thread(() -> {
                 final Scanner scanner = new Scanner(System.in);
+                System.out.print("Enter your name: ");
+                final String name = scanner.nextLine();
+                final MessageUtil mes = new MessageUtil();
+                mes.setName(name);
                 while (true) {
                     var message = scanner.nextLine();
-                    writer.println(message);
+                    mes.setMessage(message);
+                    writer.println(MessageUtil.ser(mes));
                     writer.flush();
                 }
             });

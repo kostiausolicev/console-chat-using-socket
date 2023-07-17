@@ -2,7 +2,6 @@ package ru;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 
 public class ClientHandler extends Thread {
     private final Socket client;
@@ -22,8 +21,8 @@ public class ClientHandler extends Thread {
         try {
             while (true) {
                 String message = reader.readLine();
-                System.out.println("Message from " + client.getInetAddress().getHostName() + ": " + message);
-                server.sendMessageAll("Message from " + client.getInetAddress().getHostName() + ": " + message, client);
+                System.out.println(message);
+                server.sendMessageAll(message, client);
             }
         } catch (IOException e) {
             e.printStackTrace();
